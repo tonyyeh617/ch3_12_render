@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>學生資料管理系統｜修改資料</title>
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+        background: #f5f5f5;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* 整體外框 */
+    .page-container {
+        max-width: 720px;
+        margin: 40px auto 60px;
+        padding: 0 16px;
+    }
+
+    .card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 24px 28px 28px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e5e7eb;
+    }
+
+    h1 {
+        text-align: center;
+        margin: 0 0 8px;
+        font-size: 24px;
+        letter-spacing: 1px;
+    }
+
+    .subtitle {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 14px;
+        color: #2563eb;
+        text-decoration: none;
+        margin-bottom: 16px;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+
+    .back-link::before {
+        content: "←";
+        font-size: 13px;
+    }
+
+    /* 表單 */
+    form {
+        margin-top: 8px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 10px 8px;
+        vertical-align: middle;
+    }
+
+    th {
+        width: 120px;
+        text-align: right;
+        padding-right: 12px;
+        font-weight: 600;
+        color: #374151;
+        white-space: nowrap;
+    }
+
+    td {
+        text-align: left;
+    }
+
+    tr:nth-child(even) td {
+        background-color: #f9fafb;
+    }
+
+    tr:hover td {
+        background-color: #eff6ff;
+        transition: background-color 0.15s ease;
+    }
+
+    /* 必填星號 */
+    th span.required {
+        color: #ef4444;
+        margin-right: 2px;
+    }
+
+    /* 輸入元件 */
+    input[type="text"],
+    input[type="email"],
+    input[type="date"] {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px 10px;
+        border-radius: 6px;
+        border: 1px solid #d1d5db;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="date"]:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    }
+
+    /* 性別單選 */
+    .radio-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+    }
+
+    .radio-group label {
+        margin-left: 4px;
+        margin-right: 12px;
+        cursor: pointer;
+    }
+
+    /* 按鈕列 */
+    .btn-row {
+        text-align: center;
+        padding-top: 12px;
+    }
+
+    .btn {
+        display: inline-block;
+        min-width: 90px;
+        padding: 8px 16px;
+        margin: 0 6px;
+        border-radius: 999px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        transition: transform 0.08s ease, box-shadow 0.1s ease, background-color 0.15s ease;
+    }
+
+    .btn-primary {
+        background-color: #2563eb;
+        color: white;
+        box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-primary:hover {
+        background-color: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-secondary {
+        background-color: #e5e7eb;
+        color: #374151;
+    }
+
+    .btn-secondary:hover {
+        background-color: #d1d5db;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(148, 163, 184, 0.4);
+    }
+
+    /* 小尺寸螢幕調整 */
+    @media (max-width: 600px) {
+        .card {
+            padding: 20px 16px 22px;
+        }
+
+        th {
+            width: 90px;
+            font-size: 13px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="date"] {
+            font-size: 13px;
+        }
+
+        h1 {
+            font-size: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="card">
+        <h1>學生資料管理系統 - 修改資料</h1>
+        <p class="subtitle">請更新學生基本資料，星號 (<span style="color:#ef4444">*</span>) 為必填欄位</p>
+
+        <a class="back-link" href="/index/">回首頁</a>
+        {# 也可以改用 {% url 'index' %} #}
+
+        <form action="/edit/{{ obj_data.cID }}/" method="post">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <th>
+                        <span class="required">*</span>姓名
+                    </th>
+                    <td>
+                        <input type="text" id="cName" name="cName" required value="{{ obj_data.cName }}">
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <span class="required">*</span>性別
+                    </th>
+                    <td>
+                        <div class="radio-group">
+                            <div>
+                                <input type="radio" id="cSexM" name="cSex" value="M"
+                                       {% if obj_data.cSex == "M" %}checked{% endif %}>
+                                <label for="cSexM">男</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="cSexF" name="cSex" value="F"
+                                       {% if obj_data.cSex == "F" %}checked{% endif %}>
+                                <label for="cSexF">女</label>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <span class="required">*</span>生日
+                    </th>
+                    <td>
+                        <input type="date" id="cBirthday" name="cBirthday" required
+                               value="{{ obj_data.cBirthday|date:'Y-m-d' }}">
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <span class="required">*</span>信箱
+                    </th>
+                    <td>
+                        <input type="email" id="cEmail" name="cEmail" required value="{{ obj_data.cEmail }}">
+                    </td>
+                </tr>
+                <tr>
+                    <th>電話</th>
+                    <td>
+                        <input type="text" id="cPhone" name="cPhone" value="{{ obj_data.cPhone }}">
+                    </td>
+                </tr>
+                <tr>
+                    <th>地址</th>
+                    <td>
+                        <input type="text" id="cAddr" name="cAddr" value="{{ obj_data.cAddr }}">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="btn-row">
+                        <button type="submit" class="btn btn-primary">修改</button>
+                        <button type="reset" class="btn btn-secondary">清除</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>學生資料管理系統</title>
+<style>
+    body {
+        font-family: "Microsoft JhengHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background-color: #f5f5f5;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: 30px auto;
+        background-color: #ffffff;
+        padding: 25px 30px 35px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    h1, h2 {
+        text-align: center;
+        margin: 0;
+    }
+
+    h1 {
+        margin-bottom: 8px;
+        font-size: 28px;
+        letter-spacing: 2px;
+    }
+
+    h2 {
+        margin-bottom: 20px;
+        font-size: 16px;
+        color: #555;
+    }
+
+    .head-content-top {
+        margin-bottom: 20px;
+    }
+
+    .link-button {
+        display: inline-block;
+        padding: 6px 12px;
+        font-size: 14px;
+        border-radius: 4px;
+        text-decoration: none;
+        border: 1px solid transparent;
+        background-color: #007bff;
+        color: #fff;
+        transition: all 0.2s ease;
+    }
+
+    .link-button:hover {
+        background-color: #0056b3;
+    }
+
+    .link-button-secondary {
+        background-color: #6c757d;
+    }
+
+    .link-button-secondary:hover {
+        background-color: #545b62;
+    }
+
+    .link-button-danger {
+        background-color: #dc3545;
+    }
+
+    .link-button-danger:hover {
+        background-color: #b21f2d;
+    }
+
+    .search-area {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .search-area form {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .search-area label {
+        font-size: 14px;
+    }
+
+    .search-area input[type="search"] {
+        padding: 6px 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        min-width: 220px;
+    }
+
+    .search-area button {
+        padding: 6px 14px;
+        border-radius: 4px;
+        border: 1px solid #007bff;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s ease;
+    }
+
+    .search-area button:hover {
+        background-color: #0056b3;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        font-size: 14px;
+    }
+
+    table, th, td {
+        border: 1px solid #ddd;
+    }
+
+    th, td {
+        padding: 8px 10px;
+        text-align: center;
+        word-break: break-word;
+    }
+
+    th {
+        background-color: #f0f0f0;
+        font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+        background-color: #fafafa;
+    }
+
+    tr:hover {
+        background-color: #f1f7ff;
+    }
+
+    .action-cell a {
+        margin: 0 4px;
+    }
+
+    .pagination {
+        text-align: center;
+        margin-top: 18px;
+        font-size: 14px;
+    }
+
+    .pagination a,
+    .pagination strong {
+        margin: 0 4px;
+        padding: 4px 8px;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+
+    .pagination a {
+        border: 1px solid #007bff;
+        color: #007bff;
+    }
+
+    .pagination a:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .pagination strong {
+        background-color: #007bff;
+        color: #fff;
+        border: 1px solid #007bff;
+    }
+
+    .empty-message {
+        text-align: center;
+        margin-top: 25px;
+        font-size: 16px;
+        color: #888;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <div class="head-content-top">
+        <h1>學生資料管理系統</h1>
+        <h2>
+            目前的資料筆數：{{ data_count }}，
+            <a href="/post/" class="link-button">新增學生資料</a>
+        </h2>
+    </div>
+
+    <div class="search-area">
+        <form action="/index/" method="get">
+            <label for="site_search">搜尋關鍵字：</label>
+            <input type="search"
+                   id="site_search"
+                   name="site_search"
+                   value="{{ site_search|default_if_none:'' }}">
+            <button type="submit">搜尋</button>
+        </form>
+    </div>
+
+    {% if status %}
+        {% if page_obj %}
+            <table>
+                <tr>
+                    <th>學號</th>
+                    <th>姓名</th>
+                    <th>性別</th>
+                    <th>生日</th>
+                    <th>信箱</th>
+                    <th>電話</th>
+                    <th>地址</th>
+                    <th>編輯</th>
+                </tr>
+                {% for data in page_obj %}
+                <tr>
+                    <td>{{ data.cID }}</td>
+                    <td>{{ data.cName }}</td>
+                    <td>
+                        {% if data.cSex == "M" %}
+                            男
+                        {% elif data.cSex == "F" %}
+                            女
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>{{ data.cBirthday|date:'Y-m-d' }}</td>
+                    <td>{{ data.cEmail }}</td>
+                    <td>{{ data.cPhone }}</td>
+                    <td>{{ data.cAddr }}</td>
+                    <td class="action-cell">
+                    
+                        <a href="/edit/{{ data.cID }}/" class="link-button link-button-secondary">編輯</a>
+                        <a href="/delete/{{ data.cID }}/" class="link-button link-button-danger"
+                           onclick="return confirm('確定要刪除這筆資料嗎？');">刪除</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{% if site_search %}&site_search={{ site_search }}{% endif %}">最前頁</a>
+                    <a href="?page={{ page_obj.previous_page_number }}{% if site_search %}&site_search={{ site_search }}{% endif %}">上一頁</a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <strong>{{ num }}</strong>
+                    {% else %}
+                        <a href="?page={{ num }}{% if site_search %}&site_search={{ site_search }}{% endif %}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if site_search %}&site_search={{ site_search }}{% endif %}">下一頁</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}{% if site_search %}&site_search={{ site_search }}{% endif %}">最後頁</a>
+                {% endif %}
+            </div>
+        {% else %}
+            <p class="empty-message">目前沒有任何資料。</p>
+        {% endif %}
+    {% else %}
+        <h2 class="empty-message">{{ errormessage }}</h2>
+    {% endif %}
+
+</div>
+{% endblock %}
